@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <title>ITypeSpeed</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <style> 
+                                  /*CSS code begins*/
+      .sitename{
+        font-size: 45px;
+        background-color: rgb(157, 175, 255);
+
+      }
+
+      input{
+        width: 99%;
+        height: 25px;
+      }
+
+
+      .result{
+        padding-top: 2.5%;
+        padding-bottom: 2.5%;
+        padding-left:56px ;
+        height: 27x;
+        background-color: rgb(255, 192, 203);
+        font-size: 15px;
+        font-family: sans-serif;
+        
+      }
+
+
+                                    /*CSS code ends*/
+    </style>
+  </head>
+
+  <body>
+
+    <button class="sitename">ITypeSpeed</button>
+
+    <p id="display">Loading...</p>
+
+    <input id="ip" placeholder="type away!">
+
+    <br>
+
+    <p id ="speed" class="result" title="speed">evaluating speed...</p>
+    <p id ="accuracy" class="result" title="accuracy">evaluating accuracy...</p>
+
+
+
+    <script>                              
+                                  //JAVASCRIPT code begins here
+      console.clear();
+      console.log("start")
+
+      let a=[];
+
+      fetch('textt.txt')         //get words from a textfile
+     .then(res => res.text())    //get it in the form of a string, named text containing a word per line 
+
+
+     .then(text => {    
+        console.log("text : " + typeof(text));
+
+        a=text.split("\n");     //remove nextline character and store in a which is an array
+        console.log("a : "+ typeof(a)+"\n"+"array : "+(Array.isArray(a)));
+
+
+        a=shuffle(a);           //function call
+        shuffled=(a.slice(0,120)).join(' ');      
+        
+        console.log("shuffled : "+ typeof(shuffled))
+
+        document.getElementById('display').textContent=shuffled;//shuffled text to display
+
+       
+      });
+
+      let start_time;                                  
+      const ip = document.getElementById("ip");
+
+      ip.onkeydown = e => {
+        if (!start_time) start_time=Date.now();        //timer starts
+
+
+        if (e.key==="Enter")                           
+          {
+            
+            ip.disabled=true;                         //stops taking input
+            end_time=Date.now();                      //timer stops
+
+
+            let elapsed_time=(end_time-start_time)/1000;
+           
+            
+            let inp = document.getElementById('ip').value;     //userinput stored
+            console.log("usertyped : "+inp);          
+            
+            let inpa=inp.split(" ");
+            console.log(inpa);
+
+            inpa_length=inpa.length;
+
+            console.log("Misspelled words: \n");
+
+
+            
+            let score=0;
+            for (let i=0;i<inpa_length;i++)
+            {
+              if (inpa[i].trim()==a[i].trim())
+              {
+                score+=1; 
+              }
+              else
+              {
+                score-=1;
+                console.log(inpa[i]+"     "+a[i]);
+              }
+            }
+
+            let speed=Math.floor(score/(elapsed_time/60));
+            let accuracy=score/inpa_length*100;
+
+
+            let scoreboard="start time : "+start_time+" ms\nend time : "+end_time+" ms\nelapsed time : "+elapsed_time+"s\nnumber of words typed : "+inpa_length+"\ncorrect : "+score+"\nspeed : "+speed+"wpm\naccuracy : "+accuracy+"%";
+             console.log(scoreboard);
+
+           
+             document.getElementById("speed").textContent=speed+" wpm";
+             document.getElementById("accuracy").textContent=accuracy+" %";
+
+            
+          }
+      }
+
+
+
+      
+
+                               //called function
+      function shuffle(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+          let j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a
+      }
+
+
+
+      
+    </script>
+  </body>
+</html>
